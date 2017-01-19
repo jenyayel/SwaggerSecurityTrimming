@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Text;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Swashbuckle.Swagger.Model;
+using Microsoft.IdentityModel.Tokens;
 
 namespace WebHost
 {
@@ -28,13 +26,18 @@ namespace WebHost
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // Add framework services.
+            services
+                .AddAuthorization(config =>
+                {
+                    config.AddPolicy("can-update", p => p.RequireClaim("scopes", "api:update"));
+                    config.AddPolicy("can-delete", p => p.RequireClaim("scopes", "api:delete"));
+                })
+                .AddScoped<IHttpContextAccessor, HttpContextAccessor>()
+                .AddSwaggerGen(options =>
+                {
+                    options.DocumentFilter<SwaggerAuthorizationFilter>();
+                });
             services.AddMvc();
-            services.AddSwaggerGen(options =>
-            {
-                options.AddSecurityDefinition("oauth2", new OAuth2Scheme());
-                options.DocumentFilter<SwaggerAuthorizationFilter>();
-            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -44,6 +47,16 @@ namespace WebHost
             loggerFactory.AddDebug();
 
             app
+                .UseJwtBearerAuthentication(new JwtBearerOptions
+                {
+                    TokenValidationParameters = new TokenValidationParameters
+                    {
+                        RequireExpirationTime = false,
+                        ValidateAudience = false,
+                        ValidateIssuer = false,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("secretprivatekey42"))
+                    }
+                })
                 .UseDefaultFiles()
                 .UseStaticFiles()
                 .UseMvc()

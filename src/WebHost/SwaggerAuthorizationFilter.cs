@@ -23,8 +23,8 @@ namespace WebHost
         
         public void Apply(SwaggerDocument swaggerDoc, DocumentFilterContext context)
         {
-            var http = this._provider.GetService<IHttpContextAccessor>();
-            var auth = this._provider.GetService<IAuthorizationService>();
+            var http = this._provider.GetRequiredService<IHttpContextAccessor>();
+            var auth = this._provider.GetRequiredService<IAuthorizationService>();
 
             var descriptions = context.ApiDescriptionsGroups.Items.SelectMany(group => group.Items);
 
