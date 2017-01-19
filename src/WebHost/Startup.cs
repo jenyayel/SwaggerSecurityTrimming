@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Swashbuckle.Swagger.Model;
 
 namespace WebHost
 {
@@ -29,6 +30,11 @@ namespace WebHost
         {
             // Add framework services.
             services.AddMvc();
+            services.AddSwaggerGen(options =>
+            {
+                options.AddSecurityDefinition("oauth2", new OAuth2Scheme());
+                options.DocumentFilter<SwaggerAuthorizationFilter>();
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -37,7 +43,12 @@ namespace WebHost
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-            app.UseMvc();
+            app
+                .UseDefaultFiles()
+                .UseStaticFiles()
+                .UseMvc()
+                .UseSwagger()
+                .UseSwaggerUi();
         }
     }
 }
