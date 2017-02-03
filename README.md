@@ -11,7 +11,7 @@ To run the demo:
 * Execute:
 ```
 dotnet restore
-cd src/WebHost
+cd src/V1
 dotnet run
 ```
 

@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace WebHost
+namespace V1
 {
     public class SwaggerAuthorizationFilter : IDocumentFilter
     {
