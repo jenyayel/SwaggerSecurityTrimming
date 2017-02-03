@@ -1,6 +1,9 @@
-# DEMO for Swagger security trimming 
+# Demo for Swagger security trimming 
 
 For details see [blog post](https://blog.jenyay.com/swagger-security-trimming-of-end-points-in-asp-net-core-application).
+
+`V1` contains Swagger UI client where to pass Bearer token we had to overide `index.html` file. `V2` contains example with latest version of Swagger UI, where there is a configuration
+for passing token in header and no `index.html` overide required.
 
 ## Running
 
@@ -11,7 +14,7 @@ To run the demo:
 * Execute:
 ```
 dotnet restore
-cd src/V1
+cd src/V1 # or cd src/V2
 dotnet run
 ```
 
