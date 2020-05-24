@@ -6,6 +6,7 @@
         const swagger = window.ui;
         if (!swagger) {
             console.error('Swagger wasn\'t found');
+            return;
         }
 
         ensureAuthorization(swagger);
